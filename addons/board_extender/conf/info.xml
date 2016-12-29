@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon version="0.2">
+    <title xml:lang="ko">게시판 확장</title>
+    <description xml:lang="ko">게시판 스킨 기능을 보조합니다.</description>
+    <version>0.0.0</version>
+    <date>2016-12-31</date>
+    <author email_address="mmia268@gmail.com" link="https://dnip.co.kr">
+        <name xml:lang="ko">후하니</name>
+    </author>
+</addon>

@@ -1,0 +1,100 @@
+.display-toggle{
+	display: none;
+}
+
+.stk_display{
+	padding: 0;
+	min-height: 170px;
+	max-height: 250px;
+	width: 327px;
+	border: 1px solid #DDD;
+	background-color: #FFF;
+	margin: 15px auto 0 auto;
+	line-height: 0;
+}
+
+.stk_display>.stk_head>ul.sticker_pack{
+	height: 40px;
+}
+
+.sticker_pack>li.sticker_image{
+	width: 40px;
+}
+
+.stk_display .stk_body{
+	border-top:1px solid #DDD;
+	/*width: 100%;*/
+}
+
+.stk_display .stk_head{
+    box-sizing: border-box;
+}
+
+.stk_display .stk_head>ul>li{
+	float: left;
+	position: static;
+	background: #e9ebee;
+	border-bottom: 0px;
+}
+
+.stk_display>.stk_head>ul>li.sticker_icon{
+	display:inline-block;
+	font-size: 20px;
+	width: 40px;
+	height: 40px;
+	text-align: center;
+	background-color: #EEE;
+	line-height: 40px;
+	color: #A0A0A0;
+}
+
+.stk_display>.stk_head>ul>li:nth-child(n+2){
+	border-left: 1px solid #bababa;
+}
+
+.stk_display>.stk_head>ul>li.sticker_icon a{
+	text-decoration: none;
+	color: #A0A0A0;
+}
+
+.stk_cmt .sticker_pack, .stk_cmt_reply .sticker_pack{
+	padding: 0;
+	margin: 0;
+	display: inline-block;
+}
+.sticker_pack>li{
+	display: inline;
+}
+
+.sticker_pack div>img{
+	width:40px;
+	height:40px;
+	object-fit: cover;
+}
+
+.stk_display>.stk_body{
+	padding: 3px;
+}
+
+.stk_display>.stk_body>ul{
+	text-align: center;
+	padding: 0;
+	margin: 5px 10px;
+	overflow-y:auto;
+	min-height: 160px;
+	max-height: 200px;
+}
+
+.stk_display>.stk_body>ul>li{
+	display: inline;
+	border-bottom: 0px solid #FFF;
+}
+.stk_display>.stk_body>ul>li>a{
+	display: inline-block;
+	background-size: cover;
+	background-position: 50% 50%;
+	width: 85px;
+	height: 85px;
+	margin: 4px;
+	border-radius:3px;
+}

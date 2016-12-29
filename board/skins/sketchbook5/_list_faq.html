@@ -1,0 +1,45 @@
+<include cond="$notice_list && $mi->notice_style=='2'" target="_notice.html" />
+<ul class="bd_lst bd_faq {$mi->faq_style}">
+	<!--// Notice -->
+	<li cond="$notice_list && !$mi->notice_style" loop="$notice_list=>$no,$document" class="notice clear">
+		<a class="q clear" href="{getUrl('document_srl',$document->document_srl,'cpage','')}">
+			<b class="mrk">{$lang->notice}</b>
+			<strong cond="$mi->use_category=='Y' && $document->get('category_srl')" class="cate">&#91;{$category_list[$document->get('category_srl')]->title}&#93;</strong>
+			<span class="tl">{$document->getTitle($mi->subject_cut_size)}</span>
+			<span class="fr">
+				<!--@if(!$mi->faq_style)-->
+				<span cond="$list_config['nick_name']" class="nick">{$document->getNickName()}</span>
+				<span cond="$list_config['regdate']" class="date">{$document->getRegdate('Y.m.d')}</span>
+				<!--@end-->
+			</span>
+		</a>
+		<input cond="$grant->manager" type="checkbox" name="cart" value="{$document->document_srl}" class="iCheck" title="Check This Article" onclick="doAddDocumentCart(this)" checked="checked"|cond="$document->isCarted()" />
+	</li>
+	<!--// Normal -->
+	<li loop="$document_list=>$no,$document" id="bdFaq_{$document->document_srl}" class="article clear">
+		<input cond="$grant->manager" type="checkbox" name="cart" value="{$document->document_srl}" class="iCheck" title="Check This Article" onclick="doAddDocumentCart(this)" checked="checked"|cond="$document->isCarted()" />
+		<a class="q clear" href="{getUrl('document_srl',$document->document_srl,'cpage','')}" onClick="bdFaq({$document->document_srl});return false;">
+			<b class="mrk mrkQ">Q<span>:</span></b>
+			<strong cond="$mi->use_category=='Y' && $document->get('category_srl')" class="cate">&#91;{$category_list[$document->get('category_srl')]->title}&#93;</strong>
+			<span class="tl">{$document->getTitle($mi->subject_cut_size)}</span>
+			<span class="fr">
+				<span cond="$document->getExtraEidValue('rating')" class="starRating" title="{$document->getExtraEidValue('rating')}점"><span style="width:{$document->getExtraEidValue('rating')*10}%">{$document->getExtraEidValue('rating')}점</span></span>
+				<span cond="$list_config['nick_name']" class="nick">{$document->getNickName()}</span>
+				<span cond="$list_config['regdate']" class="date">{$document->getRegdate('Y.m.d')}</span>
+			</span>
+			<i class="fa fa-chevron-up"></i>
+			<i class="fa fa-chevron-down"></i>
+		</a>
+		<div class="a clear">
+			<b class="mrk mrkA">A<span>:</span></b>
+			<div class="editArea">
+				<a class="url" href="{$document->getPermanentUrl()}">{$document->getPermanentUrl()}</a>
+				<block cond="$document->isEditable()">
+				<a class="edit" href="{getUrl('act','dispBoardWrite','document_srl',$document->document_srl,'comment_srl','')}"><span class="ico_16px write"></span>{$lang->cmd_modify}</a>
+				<a class="edit" href="{getUrl('act','dispBoardDelete','document_srl',$document->document_srl,'comment_srl','')}"><span class="ico_16px delete"></span>{$lang->cmd_delete}</a>
+				</block>
+			</div>
+			{$document->getContent(false)}
+		</div>
+	</li>
+</ul>
