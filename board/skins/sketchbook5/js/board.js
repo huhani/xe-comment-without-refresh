@@ -844,7 +844,7 @@ jQuery(function($){
 					var t = $('#'+$('.rd').attr('data-docSrl')+'_comment .bd_pg');
 					t.clone().toggleClass('bd_pg cmt_pg').appendTo(t.prev().prev());
 				}
-				board_reinit(typeof(CKEDITOR) !== 'undefined' && is_changed ? true : false);
+				board_reinit(false);
 
 				if(comment_srl=="0"){
 					return;
