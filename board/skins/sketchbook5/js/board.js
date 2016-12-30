@@ -41,9 +41,9 @@ function board(bdObj){
 	    cItem.mouseleave(cnbOut);
 		cItem.find('>ul').each(function(){
 			var t = $(this);
-			t.append('<i class="edge"></i>');
+			t.append('<i class="bubble_edge"></i>');
 			if(ie8Check) t.prepend('<i class="ie8_only bl"></i><i class="ie8_only br"></i>');
-			if(t.width() > $('html,body').width()-t.offset().left){
+			if(t.width() > $('body').width()-t.offset().left){
 				t.addClass('flip');
 			};
 		});
@@ -87,7 +87,7 @@ function board(bdObj){
 		bd.find('a.bubble').hover(function(){
 			var t = $(this);
 			if(!t.hasClass('no_bubble') && !t.find('.wrp').length){
-				t.append('<span class="wrp"><span class="speech">'+t.attr('title')+'</span><i class="edge"></i></span>').removeAttr('title');
+				t.append('<span class="wrp"><span class="speech">'+t.attr('title')+'</span><i class="bubble_edge"></i></span>').removeAttr('title');
 				if($('html,body').width()-t.offset().left < 80){
 					t.addClass('left').find('.wrp').css({marginTop:t.parent('.wrp').height()/2})
 				} else if(t.offset().top < 80 && !t.parent().parent().hasClass('rd_nav_side')){
@@ -158,7 +158,9 @@ function board(bdObj){
 
 // Scroll
 	bd.find('a.back_to').click(function(){
-		$('html,body').animate({scrollTop:$($(this).attr('href')).offset().top},{duration:1000,specialEasing:{scrollTop:'easeInOutExpo'}});
+		var t = $('body');
+		if(navigator.userAgent.toLowerCase().match(/trident/i)) var t = $('html');
+		t.animate({scrollTop:$($(this).attr('href')).offset().top},{duration:1000,specialEasing:{scrollTop:'easeInOutExpo'}});
 		return false;
 	});
 
@@ -326,7 +328,7 @@ if(bd.find('div.rd').length){
 	};
 	bd.find('a.rd_next').mouseover(rdNext).focus(rdNext);
 	// Hide : et_vars, prev_next
-	bd.find('.fdb_hide,.rd_file.hide,.fdb_lst .cmt_files').hide();
+	bd.find('.fdb_hide,.rd_file.hide_file,.fdb_lst .cmt_files').hide();
 	if(bd.find('.rd table.et_vars th').length) bd.find('.rd table.et_vars').show();
 	if(!bd.find('.bd_rd_prev').length) bd.find('a.rd_prev').hide();
 	if(!bd.find('.bd_rd_next').length) bd.find('a.rd_next').hide();
@@ -386,20 +388,54 @@ if(bd.find('div.rd').length){
 	// To SNS
 	bd.find('.to_sns a').click(function(){
 		var t = $(this);
-		var type = t.attr('data-type');
+		var type = t.data('type');
 		var p = t.parent();
-		var url = p.attr('data-url');
-		var title = p.attr('data-title');
+		var href = p.data('url');
+		var permanentUrl = p.data('permanenturl');
+		var title = p.data('title');
+		var img = bd.find('div.xe_content img:first').attr('src');
 		if(!type){
 			return;
 		} else if(type=="facebook"){
-			var loc = '//www.facebook.com/sharer/sharer.php?u='+url+'&t='+title;
+			var loc = '//www.facebook.com/sharer/sharer.php?u='+href+'&t='+title;
 		} else if(type=="twitter"){
-			loc = '//twitter.com/home?status='+title+' '+url;
+			loc = '//twitter.com/home?status='+encodeURIComponent(title)+' '+href;
 		} else if(type=="google"){
-			loc = '//plus.google.com/share?url='+url;
+			loc = '//plus.google.com/share?url='+href;
 		} else if(type=="pinterest"){
-			loc = '//pinterest.com/pin/create/bookmarklet/?url='+url+'&description='+title;
+			if(!img){
+				alert('No Image!');
+				return false;
+			};
+			loc = '//www.pinterest.com/pin/create/button/?url='+href+'&media='+img+'&description='+encodeURIComponent(title);
+		} else if(type=="kakaostory"){
+			loc = 'https://story.kakao.com/share?url='+encodeURIComponent(href);
+		} else if(type=="band"){
+			loc = 'http://www.band.us/plugin/share?body='+encodeURIComponent(title)+'%0A'+encodeURIComponent(href);
+		} else if(type=="kakao"){
+			if(img){
+				Kakao.Link.sendTalkLink({
+					label:title,
+					image:{
+						src:img,
+						width: '300',
+						height: '200'
+					},
+					webLink:{
+						text:permanentUrl,
+						url:href
+					}
+				});
+			} else {
+				Kakao.Link.sendTalkLink({
+					label:title,
+					webLink:{
+						text:permanentUrl,
+						url:href
+					}
+				});
+			};
+			return false;
 		};
 		window.open(loc);
 		return false;
@@ -418,7 +454,7 @@ if(bd.find('div.rd').length){
 		if(bd.find('form>div.wysiwyg').length){
 			editorStartTextarea(2,'content','comment_srl');
 		} else {
-			$.getScript("modules/editor/tpl/js/editor_common.min.js",function(){
+			$.getScript(request_uri+'modules/editor/tpl/js/editor_common.min.js',function(){
 				editorStartTextarea(2,'content','comment_srl');
 				var cmtWrt = bd.find('form.cmt_wrt textarea');
 				if(default_style=='blog'){
@@ -638,6 +674,7 @@ function bdLinkBoard(bd){
 
 
 
+
 jQuery(function($){
 	window.loadCommentPage = loadCommentPage;
 	var document_srl = $('.xe_content[class*=document_]').attr('class') && $('.xe_content[class*=document_]').attr('class').replace(/.*document_([0-9]+).*/,'$1');
@@ -767,19 +804,33 @@ jQuery(function($){
 			}
 		} else if( $('div.xeTextEditor').length > 0 ){
 			$('div.xeTextEditor textarea').val('');
-		} else if($('#editor_'+document_srl).length > 0){
-			$('#editor_'+document_srl).val('');
-			$(".cmt_editor").append( $("#re_cmt").hide() );
-			$(".autogrow-textarea-mirror").html('');
 		}
 
-		$.ajax({      
+		//대댓글 부분 유지
+		$('#editor_'+document_srl).val('');
+		$(".cmt_editor").append( $("#re_cmt").hide() );
+		$(".autogrow-textarea-mirror").html('');
+
+		var is_changed = false;
+		$.ajax({
 			type:"GET",
 			dataType: "html",
 			url: url,      
 			success: function(response){
 				var before_comment_is_exist = !!$('#cmtPosition>ul.fdb_lst_ul').length;
 				var $response = $(response);
+
+				// reset ckeditor
+				if($('div.cmt_editor').find('.cke').length){
+					if(
+						$('div.cmt_editor div.cke_contents iframe').contents().find('body').html() != '<p><br></p>' ||
+						$('div.cmt_editor span.file_count').text() != '0')
+						{
+							$('div.cmt_editor').html( $response.find('div.cmt_editor').html() );
+							is_changed = true;
+					}
+				}
+
 				$('#cmtPosition').html($response.find('#cmtPosition').html());
 				var after_comment_is_exist = !!$('#cmtPosition>ul.fdb_lst_ul').length;
 				if(before_comment_is_exist && !after_comment_is_exist){
@@ -793,7 +844,7 @@ jQuery(function($){
 					var t = $('#'+$('.rd').attr('data-docSrl')+'_comment .bd_pg');
 					t.clone().toggleClass('bd_pg cmt_pg').appendTo(t.prev().prev());
 				}
-				board_reinit();
+				board_reinit(typeof(CKEDITOR) !== 'undefined' && is_changed ? true : false);
 
 				if(comment_srl=="0"){
 					return;
@@ -955,8 +1006,7 @@ jQuery(function($){
 
 });
 
-
-function board_reinit(){
+function board_reinit(is_reset_editor){
 	var module_srl = jQuery('div[id*=bd_]').attr('id');
 	module_srl = module_srl ? module_srl.split("_")[1] : 0;
 	var document_srl = jQuery('.xe_content[class*=document_]').attr('class') && jQuery('.xe_content[class*=document_]').attr('class').replace(/.*document_([0-9]+).*/,'$1');
@@ -965,8 +1015,8 @@ function board_reinit(){
 	bd.find('.fdb_hide,.rd_file.hide,.fdb_lst .cmt_files').hide();
 
 // sketchbook's Toggle2 (Original : XE UI)
-	var tgC2 = bd.find('.tg_cnt2');
-	bd.find('.tg_btn2').click(function(){
+	var tgC2 = bd.find( (is_reset_editor ? '.cmt_editor .tg_cnt2, ' : '') + '#cmtPosition .tg_cnt2');
+	bd.find((is_reset_editor ? '.cmt_editor .tg_btn2, ' : '') + '#cmtPosition .tg_btn2').click(function(){
 		var t = jQuery(this);
 		var h = t.attr('data-href');
 		if(t.next(h).is(':visible')){
@@ -980,10 +1030,10 @@ function board_reinit(){
 	function tgClose2(){
 		tgC2.filter(':visible').fadeOut(200).prev().focus();
 	};
-	jQuery(document).keydown(function(event){
+/*	jQuery(document).keydown(function(event){
 		if(event.keyCode != 27) return true; // ESC
 		return tgClose2();
-	});
+	});*/
 	tgC2.mouseleave(tgClose2);
 	bd.find('.tg_blur2').focusin(tgClose2);
 	bd.find('.tg_close2,#install_ng2 .close').click(tgClose2);
