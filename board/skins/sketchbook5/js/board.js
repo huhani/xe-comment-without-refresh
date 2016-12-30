@@ -826,7 +826,7 @@ jQuery(function($){
 						$('div.cmt_editor div.cke_contents iframe').contents().find('body').html() != '<p><br></p>' ||
 						$('div.cmt_editor span.file_count').text() != '0')
 						{
-							$('div.cmt_editor').html( $response.find('div.cmt_editor').html() );
+							$('div.cmt_editor form.cmt_wrt').html( $response.find('div.cmt_editor form.cmt_wrt').html() );
 							is_changed = true;
 					}
 				}
