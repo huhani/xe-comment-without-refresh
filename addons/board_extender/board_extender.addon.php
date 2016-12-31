@@ -9,7 +9,14 @@ if(!defined('__XE__')){
  **/
 require_once(_XE_PATH_ . 'addons/board_extender/board_extender.func.php');
 
-if($called_position == 'before_module_proc'){
+if($called_position == 'before_module_init'){
+	$act = $this->act;
+	switch($act){
+		case "getCommentGrant":
+			return getCommentGrant();
+		break;
+	}
+} else if($called_position == 'before_module_proc'){
 	$act = $this->act;
 	switch($act){
 		case "dispBoardContent":
@@ -20,9 +27,6 @@ if($called_position == 'before_module_proc'){
 					return new Object(-1, "msg_invalid_request");
 				}
 			}
-		break;
-		case "getCommentGrant":
-			return getCommentGrant();
 		break;
 	}
 }
