@@ -8,7 +8,7 @@
 
 <script>//<![CDATA[
 var lang_type = "{$lang_type}";
-var bdLogin = "<!--@if(!$is_logged)-->{$lang->bd_login}@{htmlspecialchars_decode(getUrl('act','dispMemberLoginForm'))}<!--@end-->";
+var bdLogin = <!--@if(!$is_logged)-->"{$lang->bd_login}@{$current_url}".setQuery('act', 'dispMemberLoginForm')<!--@else-->""<!--@end-->;
 jQuery(function($){
 	board('#bd_{$mi->module_srl}_{$oDocument->document_srl}');
 <!--@if($mi->default_style!='viewer')-->
